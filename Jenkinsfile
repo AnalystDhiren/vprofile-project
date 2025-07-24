@@ -7,13 +7,13 @@ pipeline {
     
     environment {
         SNAP_REPO = 'vprofile-snapshot'
-		NEXUS_USER = 'admin'
-		NEXUS_PASS = 'dhiren'
-		RELEASE_REPO = 'vprofile-release'
-		CENTRAL_REPO = 'vpro-maven-central'
-		NEXUSIP = '172.31.80.64'
-		NEXUSPORT = '8081'
-		NEXUS_GRP_REPO = 'vpro-maven-group'
+        NEXUS_USER = 'admin'
+        NEXUS_PASS = 'dhiren'
+        RELEASE_REPO = 'vprofile-release'
+        CENTRAL_REPO = 'vpro-maven-central'
+        NEXUSIP = '172.31.80.64'
+        NEXUSPORT = '8081'
+        NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
     }
 
@@ -25,7 +25,7 @@ pipeline {
             post {
                 success {
                     echo 'Build completed successfully.'
-                    archiveArtifacts artifacts: '**/*.war',
+                    archiveArtifacts artifacts: '**/*.war'
                 }
                 failure {
                     echo 'Build failed.'
