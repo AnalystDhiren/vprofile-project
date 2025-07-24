@@ -22,6 +22,41 @@ pipeline {
             steps {
                 sh 'mvn -s settings.xml -DskipTests install'
             }
+            post {
+                success {
+                    echo 'Build completed successfully.'
+                    archiveArtifacts artifacts: '**/*.war',
+                }
+                failure {
+                    echo 'Build failed.'
+                }
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                success {
+                    echo 'Tests passed successfully.'
+                }
+                failure {
+                    echo 'Tests failed.'
+                }
+            }    
+        }
+        stage('checkstyle Analysis'){
+            steps {
+                sh 'mvn checkstyle:checkstyle'
+            }
+            post {
+                success {
+                    echo 'Checkstyle analysis completed successfully.'
+                }
+                failure {
+                    echo 'Checkstyle analysis failed.'
+                }
+            }
         }
     }
 }
