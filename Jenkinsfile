@@ -1,9 +1,9 @@
 pipeline {
     agent any
     tools {
-        maven 'maven'         // Make sure 'maven' is set as a tool in Jenkins
-        jdk 'jdk17'           // Make sure 'jdk17' is set as a tool in Jenkins
-        // sonarQube 'sonarscanner' // Uncomment only if you have such a tool mapping
+        maven 'maven'         // Make sure 'maven' is the Jenkins Maven tool name
+        jdk 'jdk17'           // Make sure 'jdk17' is the Jenkins JDK tool name
+        // sonarQube 'sonarscanner' // Uncomment if such a tool is configured
     }
 
     environment {
@@ -15,7 +15,7 @@ pipeline {
         NEXUSIP        = '172.31.80.64'
         NEXUSPORT      = '8081'
         NEXUS_GRP_REPO = 'vpro-maven-group'
-        NEXUS_LOGIN    = 'nexuslogin'          // Jenkins credential ID for Nexus repo
+        NEXUS_LOGIN    = 'nexuslogin'          // Jenkins Credentials ID for Nexus user
         SONARSERVER    = 'sonarserver'         // Jenkins SonarQube server name
         SONARSCANNER   = 'sonarscanner'        // Jenkins tool name for SonarScanner
     }
@@ -33,6 +33,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build') {
             steps {
                 sh 'mvn -s settings.xml -DskipTests install'
@@ -47,6 +48,7 @@ pipeline {
                 }
             }
         }
+
         stage('Test') {
             steps {
                 sh 'mvn -s settings.xml test'
@@ -60,6 +62,7 @@ pipeline {
                 }
             }
         }
+
         stage('Checkstyle Analysis') {
             steps {
                 sh 'mvn -s settings.xml checkstyle:checkstyle'
@@ -73,6 +76,7 @@ pipeline {
                 }
             }
         }
+
         stage('SonarQube Analysis') {
             environment {
                 scannerHome = tool("${SONARSCANNER}")
@@ -92,6 +96,7 @@ pipeline {
                 }
             }
         }
+
         stage('SonarQube Quality Gate') {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
@@ -99,6 +104,7 @@ pipeline {
                 }
             }
         }
+
         stage('Upload artifact') {
             steps {
                 nexusArtifactUploader(
@@ -109,12 +115,12 @@ pipeline {
                     version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
                     repository: "${RELEASE_REPO}",
                     credentialsId: "${NEXUS_LOGIN}",
-                    artifacts: [                        
+                    artifacts: [[
                         artifactId: 'vproapp',
                         classifier: '',
-                        file: 'target/vprofile-v2.war',
+                        file: 'target/vprofile-v2.war',  // Make sure the filename matches your WAR output
                         type: 'war'
-                    ]
+                    ]]
                 )
             }
         }
