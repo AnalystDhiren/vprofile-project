@@ -53,7 +53,7 @@ pipeline {
             }
             post {
                 success {
-                    echo 'Checkstyle analysis completed successfully.'
+                    echo 'Checkstyle analysis done completed successfully.'
                 }
                 failure {
                     echo 'Checkstyle analysis failed.'
