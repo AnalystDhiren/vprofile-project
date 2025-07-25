@@ -28,7 +28,7 @@ pipeline {
             }
             post {
                 success {
-                    echo 'Build completed successfully here.'
+                    echo 'Build completed successfully.'
                     archiveArtifacts artifacts: '**/*.war'
                 }
                 failure {
