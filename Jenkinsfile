@@ -66,7 +66,7 @@ pipeline {
             }
             post {
                 success {
-                    echo 'Checkstyle analysis completed successfully.'
+                    echo 'Checkstyle analysis completed successfully here.'
                 }
                 failure {
                     echo 'Checkstyle analysis failed here.'
