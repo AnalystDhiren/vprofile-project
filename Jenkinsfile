@@ -58,7 +58,7 @@ pipeline {
                     echo 'Checkstyle analysis completed successfully.'
                 }
                 failure {
-                    echo 'Checkstyle analysis failed.'
+                    echo 'Checkstyle analysis failed here.'
                 }
             }
         }
