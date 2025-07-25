@@ -1,8 +1,10 @@
 pipeline {
     agent any
     tools {
-        maven "maven"
-        jdk "jdk17"
+        maven 'maven'     // Ensure 'maven' matches Jenkins tool name
+        jdk 'jdk17'       // Ensure 'jdk17' matches Jenkins tool name
+        // NOTE: For SonarScanner tool usage, consider adding:
+        // sonarQube 'sonarscanner'  // If you are using Jenkins Sonar Scanner tool mapping
     }
     
     environment {
@@ -62,7 +64,7 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             environment {
-                scannerHome = tool "${SONARSCANNER}"
+                scannerHome = tool("${SONARSCANNER}")
             }
             steps {
                 withSonarQubeEnv("${SONARSERVER}") {
@@ -76,6 +78,13 @@ pipeline {
                           -Dsonar.jacoco.reportPaths=target/jacoco.exec \
                           -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
                     """
+                }
+            }
+        }
+        stage('SonarQube Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
