@@ -18,6 +18,9 @@ pipeline {
         NEXUS_LOGIN    = 'nexuslogin'          // Jenkins Credentials ID for Nexus user
         SONARSERVER    = 'sonarserver'         // Jenkins SonarQube server name
         SONARSCANNER   = 'sonarscanner'        // Jenkins tool name for SonarScanner
+        registrycredentials = 'ecr:us-east-1:awscreds' // Jenkins Credentials ID for AWS ECR
+        appRegistry = '476114138232.dkr.ecr.us-east-1.amazonaws.com/vprofileecr'
+        vprofileregistry = 'https://476114138232.dkr.ecr.us-east-1.amazonaws.com'
     }
 
     // Set BUILD_TIMESTAMP at the start for repeatable builds
@@ -124,5 +127,22 @@ pipeline {
                 )
             }
         }
-    }
+        stage('BUILD APP IMAGE') {
+            steps {
+                script {
+                   dockerimage = docker.build( appRegistry+":$BUILD_NUMBER", "./Docker-file/app/multistage/" )
+                }
+           }
+       }
+        stage('upload app image to ECR') {
+            steps {
+                script {
+                    docker.withRegistry(vprofileregistry, registrycredentials) {
+                        dockerimage.push("$BUILD_NUMBER")
+                        dockerimage.push("latest")
+                    }
+                }
+            }
+        }
+   }
 }
